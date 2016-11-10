@@ -15,12 +15,12 @@ def fcn_12_detect(imgs, labels, threshold, dropout=False, activation=tf.nn.relu)
     ip1 = activation(ip1)
     if dropout:
         ip1 = tf.nn.dropout(ip1, keep_prob)
-    ip2 = utils.conv2d(x=ip1, n_output=2, k_w=1, k_h=1, d_w=1, d_h=1, name="ip2")
+    ip2 = utils.conv2d(x=ip1, n_output=1, k_w=1, k_h=1, d_w=1, d_h=1, name="ip2")
 
     pred = utils.flatten(ip2)
     target = utils.flatten(labels)
 
-    loss = tf.nn.sparse_softmax_cross_entropy_with_logits(pred, target)
+    loss = -tf.reduce_sum( (  (target*tf.log(pred + 1e-9)) + ((1-target) * tf.log(1 - pred + 1e-9))), 1  , name='xentropy' )
     cost = tf.reduce_mean(loss)
 
     correct_prediction = tf.equal(tf.cast(tf.greater(pred, threshold), tf.int32), tf.cast(target, tf.int32))
@@ -41,12 +41,12 @@ def fcn_24_detect(imgs, labels, threshold, dropout=False, activation=tf.nn.relu)
     concat = tf.concat(3, [ip1, net_12_ip1])
     if dropout:
         concat = tf.nn.dropout(concat, keep_prob)
-    ip2 = utils.conv2d(x=concat, n_output=2, k_w=1, k_h=1, d_w=1, d_h=1, name="ip2")
+    ip2 = utils.conv2d(x=concat, n_output=1, k_w=1, k_h=1, d_w=1, d_h=1, name="ip2")
 
     pred = utils.flatten(ip2)
     target = utils.flatten(labels)
 
-    loss = tf.nn.sparse_softmax_cross_entropy_with_logits(pred, target)
+    loss = -tf.reduce_sum( (  (target*tf.log(pred + 1e-9)) + ((1-target) * tf.log(1 - pred + 1e-9))), 1  , name='xentropy' )
     cost = tf.reduce_mean(loss)
 
     correct_prediction = tf.equal(tf.cast(tf.greater(pred, threshold), tf.int32), tf.cast(target, tf.int32))
@@ -73,12 +73,12 @@ def fcn_48_detect(imgs, labels, threshold, dropout=False, activation=tf.nn.relu)
     concat = tf.concat(3, [ip1, net_24_ip1])
     if dropout:
         concat = tf.nn.dropout(concat, keep_prob)
-    ip2 = utils.conv2d(x=concat, n_output=2, k_w=1, k_h=1, d_w=1, d_h=1, name="ip2")
+    ip2 = utils.conv2d(x=concat, n_output=1, k_w=1, k_h=1, d_w=1, d_h=1, name="ip2")
 
     pred = utils.flatten(ip2)
     target = utils.flatten(labels)
 
-    loss = tf.nn.sparse_softmax_cross_entropy_with_logits(pred, target)
+    loss = -tf.reduce_sum( (  (target*tf.log(pred + 1e-9)) + ((1-target) * tf.log(1 - pred + 1e-9))), 1  , name='xentropy' )
     cost = tf.reduce_mean(loss)
 
     correct_prediction = tf.equal(tf.cast(tf.greater(pred, threshold), tf.int32), tf.cast(target, tf.int32))
