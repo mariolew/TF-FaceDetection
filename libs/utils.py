@@ -1,3 +1,4 @@
+import tensorflow as tf
 def conv2d(x, n_output,
            k_h=5, k_w=5, d_h=2, d_w=2,
            padding='SAME', name='conv2d', reuse=None):
@@ -50,7 +51,7 @@ def conv2d(x, n_output,
             value=conv,
             bias=b)
 
-    return h, W
+    return h
 
 def linear(x, n_output, name=None, activation=None, reuse=None):
     """Fully connected layer.
@@ -95,7 +96,7 @@ def linear(x, n_output, name=None, activation=None, reuse=None):
         if activation:
             h = activation(h)
 
-        return h, W
+        return h
 
 def flatten(x, name=None, reuse=None):
     """Flatten Tensor to 2-dimensions.
