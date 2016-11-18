@@ -39,6 +39,31 @@ def inputs(lists, image_shape, batch_size):
     return image_batch, label_batch
 
 
+def inputs_without_crop(lists, image_shape, batch_size):
+
+    filename_queue = tf.train.string_input_producer(lists, shuffle=True)
+    reader = tf.TextLineReader()
+    _, value = reader.read(filename_queue)
+    image, label = read_my_file_format(value)
+    image = tf.image.resize_images(image, [image_shape[0], image_shape[1]])
+    # image = tf.random_crop(image, image_shape)
+    label = tf.cast(label, tf.float32)
+
+    image.set_shape(image_shape)
+    # image = tf.image.random_flip_left_right(image)
+    float_image = tf.image.per_image_whitening(image)
+
+    min_after_dequeue = 1000
+    capacity = min_after_dequeue+(2+1)*batch_size
+
+    image_batch, label_batch = tf.train.shuffle_batch([float_image, label],
+                                                    batch_size=batch_size,
+                                                    capacity=capacity,
+                                                    min_after_dequeue=min_after_dequeue)
+
+    return image_batch, label_batch
+
+
 def inputs_for_test(lists, image_shape, batch_size):
 
     filename_queue = tf.train.string_input_producer(lists, shuffle=True)
