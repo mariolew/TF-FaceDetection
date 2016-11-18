@@ -1,6 +1,6 @@
 import tensorflow as tf
 from image_inputs import inputs
-import models
+from models import fcn_12_detect
 
 
 def train():
@@ -8,7 +8,7 @@ def train():
     lists = ['net_12_list.txt']
     image_train, label_train = inputs(lists, [12, 12, 3], 64)
 
-    net_output = models.fcn_12_detect(image_train, label_train, 0.2)
+    net_output = fcn_12_detect(0.2)
 
     global_step = tf.Variable(0, tf.int32)
     starter_learning_rate = 0.02
@@ -30,11 +30,13 @@ def train():
 
     # tf.get_default_graph().finalize()
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
-    saver.restore(sess, 'model/model_net_12-1150')
+    # saver.restore(sess, 'model/model_net_12-1150')
     try:
         for i in range(400000):
 
-            if i%10000==0:
+            imgs, labels = sess.run([image_train, label_train])
+
+            if i%10000==0 and i!=0:
 
                 saver.save(sess, 'model/model_net_12', global_step=global_step, write_meta_graph=False)
                 
@@ -42,14 +44,14 @@ def train():
 
                 cost, accuracy, recall, lr = sess.run(
                     [net_output['cost'], net_output['accuracy'], net_output['recall'], learning_rate],
-                    feed_dict={net_output['keep_prob']: 0.8})
+                    feed_dict={net_output['imgs']: imgs, net_output['labels']: labels, net_output['keep_prob']: 0.8})
 
                 print("Step %d, cost: %f, acc: %f, recall: %f, lr: %f"%(i, cost, accuracy, recall, lr))
                 # print("target: ", target)
                 # print("pred: ", pred)
 
             # train
-            sess.run(train_step, feed_dict={net_output['keep_prob']: 0.8})
+            sess.run(train_step, feed_dict={net_output['imgs']: imgs, net_output['labels']: labels, net_output['keep_prob']: 0.8})
 
         coord.request_stop()
 
@@ -60,6 +62,7 @@ def train():
     finally:
 
         print('Done training.')
+        saver.save(sess, 'model/model_net_12', global_step=global_step, write_meta_graph=False)
 
     coord.request_stop()
 
