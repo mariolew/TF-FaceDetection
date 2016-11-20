@@ -56,10 +56,13 @@ def inputs_without_crop(lists, image_shape, batch_size):
     min_after_dequeue = 1000
     capacity = min_after_dequeue+(2+1)*batch_size
 
-    image_batch, label_batch = tf.train.shuffle_batch([float_image, label],
-                                                    batch_size=batch_size,
-                                                    capacity=capacity,
-                                                    min_after_dequeue=min_after_dequeue)
+    # image_batch, label_batch = tf.train.shuffle_batch([float_image, label],
+    #                                                 batch_size=batch_size,
+    #                                                 capacity=capacity,
+    #                                                 min_after_dequeue=min_after_dequeue)
+    image_batch, label_batch = tf.train.batch([float_image, label],
+                                            batch_size=batch_size,
+                                            capacity=128)
 
     return image_batch, label_batch
 
