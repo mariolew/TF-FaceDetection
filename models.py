@@ -39,12 +39,12 @@ def fcn_12_detect(threshold, dropout=False, activation=tf.nn.relu):
             'recall': recall_12, 'thresholding': thresholding_12}
 
 def fcn_24_detect(threshold, dropout=False, activation=tf.nn.relu):
-    
+
     imgs = tf.placeholder(tf.float32, [None, 24, 24, 3])
     labels = tf.placeholder(tf.float32, [None, 1])
     keep_prob = tf.placeholder(tf.float32, name='keep_prob')
     
-    net_12 = fcn_12_detect(0.5, activation)
+    net_12 = fcn_12_detect(0.16, activation=activation)
     with tf.variable_scope('net_24'):
         conv1, _ = utils.conv2d(x=imgs, n_output=64, k_w=5, k_h=5, d_w=1, d_h=1, name="conv1")
         conv1 = activation(conv1)
@@ -71,7 +71,7 @@ def fcn_24_detect(threshold, dropout=False, activation=tf.nn.relu):
         correct_prediction = tf.equal(tf.cast(tf.greater(pred, threshold), tf.int32), tf.cast(target, tf.int32))
         acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-        return {'imgs': imgs, 'labels': labels,
+        return {'net_12': net_12, 'imgs': imgs, 'labels': labels,
             'imgs_12': net_12['imgs'], 'labels_12': net_12['labels'],
             'keep_prob': keep_prob, 'keep_prob_12': net_12['keep_prob'],
             'cost': cost, 'pred': pred, 'accuracy': acc, 'features': concat,
@@ -84,7 +84,7 @@ def fcn_48_detect(threshold, dropout=False, activation=tf.nn.relu):
     labels = tf.placeholder(tf.float32, [None, 1])
     keep_prob = tf.placeholder(tf.float32, name='keep_prob')
     
-    net_24 = fcn_24_detect(0.5, activation)
+    net_24 = fcn_24_detect(0.01, activation=activation)
     with tf.variable_scope('net_48'):
         conv1, _ = utils.conv2d(x=imgs, n_output=64, k_w=5, k_h=5, d_w=1, d_h=1, name="conv1")
         conv1 = activation(conv1)
@@ -115,7 +115,7 @@ def fcn_48_detect(threshold, dropout=False, activation=tf.nn.relu):
         correct_prediction = tf.equal(tf.cast(tf.greater(pred, threshold), tf.int32), tf.cast(target, tf.int32))
         acc = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-        return {'imgs': imgs, 'labels': labels,
+        return {'net_24': net_24, 'imgs': imgs, 'labels': labels,
             'imgs_24': net_24['imgs'], 'labels_24': net_24['labels'],
             'imgs_12': net_24['imgs_12'], 'labels_12': net_24['labels_12'],
             'keep_prob': keep_prob, 'keep_prob_24': net_24['keep_prob'], 'keep_prob_12': net_24['keep_prob_12'],
