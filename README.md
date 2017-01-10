@@ -46,5 +46,4 @@ python3 train_cal_12(24, 48).py
 python3 run.py
 
 # Result
-**Effect drawing:**
 ![demo](https://github.com/mariolew/TF-FaceDetection/raw/master/images/demo.png)
