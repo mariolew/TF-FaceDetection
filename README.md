@@ -25,19 +25,19 @@ python3 generate_cal_list(net_list).py
 ## Train
 python3 train_net_12.py
 
-python3 net_12_eval.py(to determine threashold)
+python3 net_12_eval.py(to determine threshold)
 
 python3 net_24_neg.py
 
 python3 train_net_24.py
 
-python3 net_24_eval.py(to determine threashold)
+python3 net_24_eval.py(to determine threshold)
 
 python3 net_48_neg.py
 
 python3 train_net_48.py
 
-python3 net_48_eval.py(to determine threashold)
+python3 net_48_eval.py(to determine threshold)
 
 python3 train_cal_12(24, 48).py
 
